@@ -220,9 +220,9 @@
   .to-row .nm{flex:1;text-align:left;font-weight:600;color:#5a3a1e;font-size:calc(var(--u)*0.85);}
   .to-row .cn{font-weight:700;font-size:calc(var(--u)*1.05);color:#2f7d22;}
   .to-row .cn.short{color:#d33;}
-  .to-actions{display:flex;gap:calc(var(--u)*0.5);margin-top:calc(var(--u)*0.3);}
-  .to-do,.to-buy{flex:1;border:none;border-radius:calc(var(--u)*0.7);font-family:inherit;font-weight:700;color:#fff;cursor:pointer;
-    font-size:calc(var(--u)*0.95);padding:calc(var(--u)*0.5) calc(var(--u)*0.4);text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:calc(var(--u)*0.3);}
+  .to-actions{display:flex;flex-direction:column;gap:calc(var(--u)*0.4);margin-top:calc(var(--u)*0.5);}
+  .to-do,.to-buy{width:100%;border:none;border-radius:calc(var(--u)*0.7);font-family:inherit;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;
+    font-size:calc(var(--u)*1);padding:calc(var(--u)*0.5) calc(var(--u)*0.6);text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:calc(var(--u)*0.35);}
   .to-do{background:linear-gradient(#86d24c,#4f9c22);box-shadow:0 calc(var(--u)*0.26) 0 #3c7d18;}
   .to-do:disabled{background:linear-gradient(#cfcabf,#a8a294);box-shadow:0 calc(var(--u)*0.26) 0 #807a6d;cursor:not-allowed;color:#f0ece3;}
   .to-buy{background:linear-gradient(#ffb24d,#f08a2a);box-shadow:0 calc(var(--u)*0.26) 0 #c4661a;}
@@ -494,12 +494,13 @@
   <div class="owin-scrim" id="toScrim" onclick="toClose()"></div>
   <div class="owin-pop to-pop" id="toPop">
     <button class="closex" onclick="toClose()">✕</button>
-    <h3>🔧 Техобслуживание</h3>
-    <div class="to-sub" id="toSub">Ресурс двигателя исчерпан. Без ТО шаттл не полетит. Вложи ремонтные детали:</div>
+    <h3>Ремонт двигателя</h3>
+    <div class="to-sub" id="toSub">Двигатель изношен. Почини его, чтобы лететь дальше.</div>
+    <div class="rew-label">Ремонтные детали</div>
     <div id="toParts"></div>
     <div class="to-actions">
-      <button class="to-do" id="toDoBtn" onclick="doTO()">Провести ТО</button>
-      <button class="to-buy" id="toBuyBtn" onclick="buyTO()">Купить ТО · <svg viewBox="0 0 30 20"><rect x="1" y="2" width="28" height="16" rx="3" fill="#3aa856" stroke="#1f7a39" stroke-width="1.5"/><circle cx="15" cy="10" r="4.5" fill="#bff0c8" stroke="#1f7a39" stroke-width="1.2"/></svg> 120</button>
+      <button class="to-do" id="toDoBtn" onclick="doTO()">Починить деталями</button>
+      <button class="to-buy" id="toBuyBtn" onclick="buyTO()">Починить за <svg viewBox="0 0 30 20"><rect x="1" y="2" width="28" height="16" rx="3" fill="#3aa856" stroke="#1f7a39" stroke-width="1.5"/><circle cx="15" cy="10" r="4.5" fill="#bff0c8" stroke="#1f7a39" stroke-width="1.2"/></svg> 120</button>
     </div>
   </div>
 
@@ -820,9 +821,9 @@
     function openTO(){
       const full=engine>=ENG_MAX, enough=TO_REQ.every(rq=>(inv[rq.key]||0)>=rq.need);
       const sub=document.getElementById('toSub');
-      if(engine<=0) sub.textContent='Ресурс двигателя исчерпан. Без ТО шаттл не полетит. Вложи ремонтные детали:';
-      else if(full) sub.textContent='Двигатель в норме: '+engine+'/'+ENG_MAX+'. ТО пока не требуется.';
-      else sub.textContent='Заряд двигателя: '+engine+'/'+ENG_MAX+'. Можно провести ТО заранее — восстановит до максимума.';
+      if(engine<=0) sub.textContent='Двигатель изношен — без ремонта шаттл не полетит.';
+      else if(full) sub.textContent='Двигатель в норме ('+engine+'/'+ENG_MAX+'). Ремонт пока не нужен.';
+      else sub.textContent='Заряд двигателя '+engine+'/'+ENG_MAX+'. Можно починить заранее — до максимума.';
       document.getElementById('toParts').innerHTML=TO_REQ.map(rq=>{ const r=RES[rq.key], have=inv[rq.key]||0, short=have<rq.need;
         return `<div class="to-row"><img src="${r.icon}"><span class="nm">${r.name}</span><span class="cn ${short?'short':''}">${have}/${rq.need}</span></div>`; }).join('');
       document.getElementById('toDoBtn').disabled = full || !enough;   // nothing to restore when full
